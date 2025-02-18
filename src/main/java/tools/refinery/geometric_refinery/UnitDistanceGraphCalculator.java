@@ -75,12 +75,7 @@ public class UnitDistanceGraphCalculator {
         queryAdapter.flushChanges();
         var cursor = resultSet.getAll();
 
-        int edgesAdded = 0;
-        while (cursor.move()) {
-            Tuple edge = cursor.getKey();
-            System.out.println(edge.get(0)+" "+edge.get(1));
-            ++edgesAdded;
-        }
+        int edgesAdded = resultSet.size();
         System.out.println(edgesAdded);
         return edgesAdded;
     }

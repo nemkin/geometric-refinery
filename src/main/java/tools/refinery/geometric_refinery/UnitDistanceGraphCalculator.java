@@ -26,25 +26,39 @@ public class UnitDistanceGraphCalculator {
         Interpretation<Coordinate> coordinateInterpretation = model.getInterpretation(coordinate);
         Interpretation<Boolean> edgeInterpretation = model.getInterpretation(edge);
 
+        Version lastVersion = model.commit();
+
         Random r = new Random(0);
-        for(int i=0; i<10000; i++) {
+        for (int i = 0; i < 100; i++) {
+            int newEdges = AddNodes(r, coordinateInterpretation, edgeInterpretation);
+            System.out.println("new edges = " + newEdges);
+            if (newEdges > 5) {
+                lastVersion = model.commit();
+            } else {
+                model.restore(lastVersion);
+            }
+        }
+    }
+
+    private static int AddNodes(Random r, Interpretation<Coordinate> coordinateInterpretation, Interpretation<Boolean> edgeInterpretation) {
+        int edgesAdded = 0;
+        for (int i = 0; i < 1000; i++) {
             Tuple node = Tuple.of(i);
-            Coordinate c = new Coordinate(r.nextDouble()*2-1, r.nextDouble()*2-1);
+            Coordinate c = new Coordinate(r.nextDouble() * 2 - 1, r.nextDouble() * 2 - 1);
 
             var cursor = coordinateInterpretation.getAll();
-            while(cursor.move()) {
+            while (cursor.move()) {
                 Tuple otherNode = cursor.getKey();
                 Coordinate otherC = cursor.getValue();
 
-                if(c.isUnitDistance(otherC))
-                {
+                if (c.isUnitDistance(otherC)) {
                     edgeInterpretation.put(Tuple.of(node.get(0), otherNode.get(0)), true);
-                    System.out.println("huhu él "+node.get(0)+" "+otherNode.get(0));
+                    System.out.println("huhu él " + node.get(0) + " " + otherNode.get(0));
+                    edgesAdded++;
                 }
             }
-            coordinateInterpretation.put(node,c);
+            coordinateInterpretation.put(node, c);
         }
-
-        Version v = model.commit();
+        return edgesAdded;
     }
 }

@@ -21,4 +21,5 @@ dependencies {
     implementation(refinery.store.query.interpreter)
     implementation(refinery.store.dse)
     implementation(refinery.store.reasoning)
+    implementation(refinery.generator)
 }
